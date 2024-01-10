@@ -95,8 +95,8 @@ void ShowMenu()
             case "3":
             AdoptPlant();
                 break;
-            case "4": 
-                Console.WriteLine($"\tRemoving a plant is not yet available");
+            case "4":
+            RemoveAPlant();
                 break;
             default: Console.WriteLine($"That is not an option\n");
             ShowMenu();
@@ -139,7 +139,7 @@ void AdoptPlant()
 
     int plantSelected = 0; // index of the plant selected
 
-    Console.WriteLine("Please choose a the number of the plant you would like to adopt:");
+    Console.WriteLine("Please choose the number of the plant you would like to adopt:");
 
     List<Plant> availablePlants = plants.Where(p => !p.Sold).ToList(); 
 
@@ -168,6 +168,35 @@ void AdoptPlant()
         AdoptPlant();
     }
      
+}
+void RemoveAPlant()
+{   
+    
+    string plantChoice = null;
+    Console.WriteLine("Please choose the number of the plant listing you would like to remove.\n");
+    int numIndex = 1;// starts the numbering at one
+
+
+    foreach (Plant plant in plants)
+    {
+        Console.WriteLine($@"{numIndex++}.  {plant.Species} in {plant.City}. 
+"); 
+    }
+        plantChoice = Console.ReadLine();
+        if(plantChoice != null && Convert.ToInt32(plantChoice) < plants.Count && plantChoice != "0") 
+        {
+            plants.RemoveAt(Convert.ToInt32(plantChoice) + 1);
+        Console.WriteLine("Listing has been removed.");
+        ShowPlants() ;
+        
+
+        }
+        else
+        {
+            Console.WriteLine("That is not an option please select another");
+            RemoveAPlant() ;
+        }
+
 }
    
 
