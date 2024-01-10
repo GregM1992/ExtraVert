@@ -1,7 +1,7 @@
 ﻿List<Plant> plants = new()
 {
     new Plant()
-    {
+    {   
         Species = "Spider Plant",
         LightNeeds = 3,
         AskingPrice = 35.00m,
@@ -133,13 +133,41 @@ void PostPlant()
 }
 void AdoptPlant()
 {
+    string plantChoice = null;
+
     int numIndex = 1;
-    Console.WriteLine("Please choose a plant you would like to adopt:");
-    List<Plant> availablePlants = plants.Where(p => p.Sold).ToList(); 
+
+    int plantSelected = 0; // index of the plant selected
+
+    Console.WriteLine("Please choose a the number of the plant you would like to adopt:");
+
+    List<Plant> availablePlants = plants.Where(p => !p.Sold).ToList(); 
+
     foreach(Plant plant in availablePlants)
     {
-        Console.WriteLine($@"{numIndex ++}. {plant.Species}, Price: {plant.AskingPrice} dollars");
+        Console.WriteLine($@"{numIndex++}. {plant.Species}, Price: {plant.AskingPrice} dollars");   
     }
+
+      plantChoice = Console.ReadLine();
+
+    if (plantChoice != null && plantChoice != "0" && Convert.ToInt32(plantChoice) < availablePlants.Count)
+      
+        {
+        plantSelected = Convert.ToInt32(plantChoice) - 1;
+
+        Plant plantBeingAdopted = availablePlants[plantSelected];
+
+        plantBeingAdopted.Sold = true;
+
+        Console.WriteLine($"Enjoy your new {plantBeingAdopted.Species}!!!");
+
+    }
+    else 
+    {
+        Console.WriteLine("That is not an option please select another.");
+        AdoptPlant();
+    }
+     
 }
    
 
