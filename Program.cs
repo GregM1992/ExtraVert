@@ -89,6 +89,8 @@ void ShowMenu()
 
 5. Search plants based on light needs
 
+6. Show statistics
+
 ");
    choice = Console.ReadLine();
         switch (choice) 
@@ -111,8 +113,11 @@ void ShowMenu()
             case "4":
             RemoveAPlant();
                 break;
-        case "5":
+            case "5":
             SearchForLightShade();
+            break;
+            case "6":
+            ShowStats();
             break;
         default: Console.WriteLine($"That is not an option\n");
             ShowMenu();
@@ -267,6 +272,26 @@ void SearchForLightShade()
 
 
 
+}
+void ShowStats()
+{
+    Console.WriteLine($"These are the current statistics:\n");
+
+    List<Decimal> plantPrices = plants.Select(p => p.AskingPrice).ToList(); //grabs all the prices of all plants and lists them
+    decimal lowestPlantPrice = plantPrices.Min(); //finds the lowest price out of all prices and stores it in a variable
+    Plant lowestPricedPlant = plants.FirstOrDefault(p => p.AskingPrice == lowestPlantPrice); //runs that price against all plants (not just available plants can change in the future if needed)
+
+    List<Plant> unSoldPlants = plants.Where(p => !p.Sold).ToList();
+    List<Plant> availablePlants = unSoldPlants.Where(a => a.AvailableUntil >= DateTime.Now).ToList();
+
+    Console.WriteLine($"{lowestPricedPlant.Species} is the lowest priced plant at {lowestPricedPlant.AskingPrice} dollars.\n");
+
+    int numberOfAvailablePlants = availablePlants.Count();
+
+    Console.WriteLine($"We have {numberOfAvailablePlants} available plants right now\n");
+    //Console.WriteLine(highestLightNeedPlant);
+    //Console.WriteLine(averageLightNeedsOfAvailablePlants);
+    //Console.WriteLine(percentageOfPlantsAdopted);
 }
 
    
