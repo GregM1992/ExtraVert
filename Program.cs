@@ -1,4 +1,6 @@
-﻿List<Plant> plants = new()
+﻿using System.Net.Sockets;
+
+List<Plant> plants = new()
 {
     new Plant()
     {   
@@ -47,9 +49,12 @@
     },
 };
 
+Random random = new Random();
+
 void Greeting()
 {
     Console.WriteLine($"Welcome to the Plant Store!\n");
+    PlantOfTheDay();
 }
 void ShowPlants()
 {
@@ -76,6 +81,9 @@ void ShowMenu()
 3. Adopt a plant
 
 4. Delist a plant
+
+5. Search plants based on light needs
+
 ");
    choice = Console.ReadLine();
         switch (choice) 
@@ -98,7 +106,10 @@ void ShowMenu()
             case "4":
             RemoveAPlant();
                 break;
-            default: Console.WriteLine($"That is not an option\n");
+        case "5":
+            SearchForLightShade();
+            break;
+        default: Console.WriteLine($"That is not an option\n");
             ShowMenu();
             break;
 
@@ -185,7 +196,7 @@ void RemoveAPlant()
         plantChoice = Console.ReadLine();
         if(plantChoice != null && Convert.ToInt32(plantChoice) < plants.Count && plantChoice != "0") 
         {
-            plants.RemoveAt(Convert.ToInt32(plantChoice) + 1);
+            plants.RemoveAt(Convert.ToInt32(plantChoice) - 1);
         Console.WriteLine("Listing has been removed.");
         ShowPlants() ;
         
@@ -198,6 +209,53 @@ void RemoveAPlant()
         }
 
 }
+void PlantOfTheDay()
+{
+    List<Plant> availablePlants = plants.Where(p => !p.Sold).ToList();
+    int randomPlantInt = random.Next(1, availablePlants.Count);
+    Plant randomPlant = availablePlants[randomPlantInt];
+    Console.WriteLine($"{randomPlant.Species}\n");
+    
+}
+
+void SearchForLightShade()
+{
+    int searchInput = 0;
+
+    Console.WriteLine("Please enter the light need for the plant you would like. Using 1-5 ( 1 being the least light ) :");
+    try
+    {
+    searchInput = Convert.ToInt32(Console.ReadLine());
+    List<Plant> searchedPlants = plants.Where(p => p.LightNeeds == searchInput).ToList();
+
+    foreach(Plant plant in searchedPlants)
+    { 
+        Console.WriteLine($"{plant.Species}\n");
+    }
+
+    if(searchedPlants.Count == 0 || searchInput > 5)
+    {
+        Console.WriteLine($"Sorry, we dont have plants that meet that light requirement\n\n");
+    } 
+    } 
+    catch
+    {
+        Console.WriteLine($"That is not a valid input\n");
+        SearchForLightShade();
+    }
+    
+  
+   
+
+
+
+
+
+
+
+
+}
+
    
 
 Greeting();
