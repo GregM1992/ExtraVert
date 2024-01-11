@@ -9,7 +9,8 @@ List<Plant> plants = new()
         AskingPrice = 35.00m,
         City = "Nashville",
         ZIP = 37206, 
-        Sold = false
+        Sold = false,
+        AvailableUntil =  new DateTime(2023, 3, 4),
     },
     new Plant()
     {
@@ -18,7 +19,8 @@ List<Plant> plants = new()
         AskingPrice = 45.00m,
         City = "Asheville",
         ZIP = 37854,
-        Sold = true
+        Sold = false,
+        AvailableUntil = new DateTime(2025, 4, 20)
     },
     new Plant()
     {
@@ -27,7 +29,8 @@ List<Plant> plants = new()
         AskingPrice = 35.00m,
         City = "Nashville",
         ZIP = 37206,
-        Sold = false
+        Sold = false,
+        AvailableUntil = new DateTime(2029, 3, 14)
     },
     new Plant()
     {
@@ -36,7 +39,8 @@ List<Plant> plants = new()
         AskingPrice = 35.00m,
         City = "Nashville",
         ZIP = 37206,
-        Sold = false
+        Sold = false,
+        AvailableUntil = new DateTime(2020, 3, 3)
     },
     new Plant()
     {
@@ -45,7 +49,8 @@ List<Plant> plants = new()
         AskingPrice = 15.00m,
         City = "Pennsylvania",
         ZIP = 84585,
-        Sold = true
+        Sold = false,
+        AvailableUntil = new DateTime(1992, 9, 22)
     },
 };
 
@@ -127,6 +132,12 @@ void PostPlant()
     string city = Console.ReadLine();
     Console.WriteLine("Please enter the zip code");
     int zipCode = Convert.ToInt32( Console.ReadLine());
+    Console.WriteLine("Please enter the year available until. (yyyy)");
+    int year = Convert.ToInt32( Console.ReadLine());
+    Console.WriteLine("Month available until? (mm)");
+    int month = Convert.ToInt32( Console.ReadLine());
+    Console.WriteLine("Day available until? (dd)");
+    int day = Convert.ToInt32( Console.ReadLine());
 
     Plant newPlant = new()
     {
@@ -134,8 +145,10 @@ void PostPlant()
         LightNeeds = lightNeeded,
         AskingPrice = askingPrice,
         City = city,
-        ZIP = zipCode
+        ZIP = zipCode,
+        AvailableUntil = new DateTime(year, month, day)
     };
+
     plants.Add(newPlant);
     Console.Clear();
     Console.WriteLine("Plant Added!");
@@ -152,7 +165,8 @@ void AdoptPlant()
 
     Console.WriteLine("Please choose the number of the plant you would like to adopt:");
 
-    List<Plant> availablePlants = plants.Where(p => !p.Sold).ToList(); 
+    List<Plant> unSoldPlants = plants.Where(p => !p.Sold).ToList();
+    List<Plant> availablePlants = unSoldPlants.Where(a => a.AvailableUntil >= DateTime.Now).ToList();
 
     foreach(Plant plant in availablePlants)
     {
@@ -161,7 +175,7 @@ void AdoptPlant()
 
       plantChoice = Console.ReadLine();
 
-    if (plantChoice != null && plantChoice != "0" && Convert.ToInt32(plantChoice) < availablePlants.Count)
+    if (plantChoice != null && plantChoice != "0" && Convert.ToInt32(plantChoice) <=  availablePlants.Count)
       
         {
         plantSelected = Convert.ToInt32(plantChoice) - 1;
@@ -217,7 +231,6 @@ void PlantOfTheDay()
     Console.WriteLine($"{randomPlant.Species}\n");
     
 }
-
 void SearchForLightShade()
 {
     int searchInput = 0;
