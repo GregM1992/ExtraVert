@@ -15,7 +15,7 @@ List<Plant> plants = new()
     new Plant()
     {
         Species = "Snake Plant",
-        LightNeeds = 2,
+        LightNeeds = 3,
         AskingPrice = 45.00m,
         City = "Asheville",
         ZIP = 37854,
@@ -25,17 +25,17 @@ List<Plant> plants = new()
     new Plant()
     {
         Species = "Peace Lily",
-        LightNeeds = 1,
+        LightNeeds = 4,
         AskingPrice = 35.00m,
         City = "Nashville",
         ZIP = 37206,
-        Sold = false,
+        Sold = true,
         AvailableUntil = new DateTime(2029, 3, 14)
     },
     new Plant()
     {
         Species = "Fiddle Leaf Fig",
-        LightNeeds = 3,
+        LightNeeds = 5,
         AskingPrice = 35.00m,
         City = "Nashville",
         ZIP = 37206,
@@ -127,6 +127,8 @@ void ShowMenu()
     }
 void PostPlant()
 {
+    try
+    { 
     Console.WriteLine("Enter the species of the plant:");
     string species = Console.ReadLine();
     Console.WriteLine("Enter the amount of light needed as 1-5 (1 being shady and 5 being bright light):");
@@ -144,17 +146,25 @@ void PostPlant()
     Console.WriteLine("Day available until? (dd)");
     int day = Convert.ToInt32( Console.ReadLine());
 
-    Plant newPlant = new()
+    
+        Plant newPlant = new()
+        {
+            Species = species,
+            LightNeeds = lightNeeded,
+            AskingPrice = askingPrice,
+            City = city,
+            ZIP = zipCode,
+            AvailableUntil = new DateTime(year, month, day)
+        };
+    
+        plants.Add(newPlant);
+    }
+    catch 
     {
-        Species = species,
-        LightNeeds = lightNeeded,
-        AskingPrice = askingPrice,
-        City = city,
-        ZIP = zipCode,
-        AvailableUntil = new DateTime(year, month, day)
-    };
-
-    plants.Add(newPlant);
+        Console.WriteLine($"There was an issue with your input. Returning to the main menu\n");
+        ShowMenu();
+    }
+    
     Console.Clear();
     Console.WriteLine("Plant Added!");
     ShowMenu();
@@ -233,7 +243,9 @@ void PlantOfTheDay()
     List<Plant> availablePlants = plants.Where(p => !p.Sold).ToList();
     int randomPlantInt = random.Next(1, availablePlants.Count);
     Plant randomPlant = availablePlants[randomPlantInt];
-    Console.WriteLine($"{randomPlant.Species}\n");
+    Console.WriteLine($"Our Plant of the day is a {PlantDetails(randomPlant)}!\n");// uses the plantdetails method with parameters
+
+
     
 }
 void SearchForLightShade()
@@ -276,7 +288,15 @@ void SearchForLightShade()
 void ShowStats()
 {
     Console.WriteLine($"These are the current statistics:\n");
+    ShowLowestPricedPlant();
+    ShowNumberOfAvailablePlants(); 
+    ShowHighestLightNeedPlant();
+    ShowAverageLightNeed();
+    ShowPercentOfAdoptedPlants();
+}
 
+void ShowLowestPricedPlant()
+{
     List<Decimal> plantPrices = plants.Select(p => p.AskingPrice).ToList(); //grabs all the prices of all plants and lists them
     decimal lowestPlantPrice = plantPrices.Min(); //finds the lowest price out of all prices and stores it in a variable
     Plant lowestPricedPlant = plants.FirstOrDefault(p => p.AskingPrice == lowestPlantPrice); //runs that price against all plants (not just available plants can change in the future if needed)
@@ -285,16 +305,56 @@ void ShowStats()
     List<Plant> availablePlants = unSoldPlants.Where(a => a.AvailableUntil >= DateTime.Now).ToList();
 
     Console.WriteLine($"{lowestPricedPlant.Species} is the lowest priced plant at {lowestPricedPlant.AskingPrice} dollars.\n");
+}
+void ShowNumberOfAvailablePlants()
+{
+    List<Plant> unSoldPlants = plants.Where(p => !p.Sold).ToList();
+    List<Plant> availablePlants = unSoldPlants.Where(a => a.AvailableUntil >= DateTime.Now).ToList();
 
     int numberOfAvailablePlants = availablePlants.Count();
 
-    Console.WriteLine($"We have {numberOfAvailablePlants} available plants right now\n");
-    //Console.WriteLine(highestLightNeedPlant);
-    //Console.WriteLine(averageLightNeedsOfAvailablePlants);
-    //Console.WriteLine(percentageOfPlantsAdopted);
+    Console.WriteLine($"We have {numberOfAvailablePlants} available plants right now.\n");
+}
+void ShowHighestLightNeedPlant()
+{
+    List<Int32> lightNeeds = plants.Select(p => p.LightNeeds).ToList();
+   int highestLightNeedPlant =  lightNeeds.Max();
+    List<Plant> highestLightNeededPlants = plants.Where(p => p.LightNeeds == highestLightNeedPlant).ToList();
+    foreach (Plant plant in highestLightNeededPlants)
+    {
+        Console.WriteLine($"The {plant.Species} has the highest light need which is {plant.LightNeeds}.\n");
+    }
+}
+void ShowAverageLightNeed()
+{
+    List<Int32> lightNeeds = plants.Select(p => p.LightNeeds).ToList();
+    int totalLightNeed = 0;
+    foreach (Int32 lightNeed in lightNeeds)
+    {
+        totalLightNeed += lightNeed; 
+    }
+    double averageLightNeed = 0;
+    averageLightNeed = totalLightNeed / lightNeeds.Count;
+    Console.WriteLine($"The Average Light Needs of all the plants is {averageLightNeed}.\n");
+}
+void ShowPercentOfAdoptedPlants()
+{ 
+    List<Plant> adoptedPlants = plants.Where(s => s.Sold).ToList();
+    int numberOfAdoptedPlants = adoptedPlants.Count();
+
+    double pointsOfTotalPlantsAdopted = (double)numberOfAdoptedPlants / plants.Count;
+    double percentOfAdoptedPlants = pointsOfTotalPlantsAdopted * 100;
+    Console.WriteLine($"{percentOfAdoptedPlants}% of plants have been sold!");
+
+}
+string PlantDetails(Plant plant)
+{
+    string plantString = plant.Species;
+
+    return plantString;
+
 }
 
-   
 
 Greeting();
 ShowMenu();
